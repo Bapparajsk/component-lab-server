@@ -1,7 +1,9 @@
-import userModel from "./user.model";
-import postUploadUserModel from "./post-upload.model";
+import UserModel from "./user.model";
+import PostUploadUserModel from "./post-upload.model";
+import PostModel from "./post.model";
 
 export {
-    userModel,
-    postUploadUserModel
+    UserModel,
+    PostUploadUserModel,
+    PostModel
 };
