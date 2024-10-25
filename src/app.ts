@@ -1,5 +1,7 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import express, { Express } from "express";
+
+import {admin}  from "./route";
 import cors from "cors";
 import morgan from "morgan";
 
@@ -9,6 +11,8 @@ const PORT = Number(process.env.PORT) || 3000;
 
 app.use(cors());
 app.use(morgan("dev"));
+
+app.use("/admin", admin);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port http://127.0.0.1${PORT}`);
