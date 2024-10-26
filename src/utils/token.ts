@@ -7,7 +7,7 @@ const create = (payload: any, options?: SignOptions) => {
         throw new Error("JWT_SECRET is not set in .env file");
     }
 
-    return jwt.sign(payload, secret, { expiresIn: "1h",...options });
+    return jwt.sign(payload, secret, options);
 };
 
 const verify = (token: string) => {

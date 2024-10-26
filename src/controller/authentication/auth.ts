@@ -6,6 +6,7 @@ import {IUser} from "../../types/user";
 import {UserModel} from "../../model";
 import {shrinkUser} from "../../helper/shrinkUser";
 import { each } from "../../lib/each";
+import { redis } from "../../config";
 
 export const login = async (req: Request, res: Response) => {
     try {
@@ -27,7 +28,7 @@ export const login = async (req: Request, res: Response) => {
             return;
         }
 
-        const token = jwt.create({id: user._id, name: user.displayName}, {expiresIn: "30d", algorithm: "ES384"});
+        const token = jwt.create({id: user._id, name: user.displayName}, {expiresIn: "7d", algorithm: "ES384"});
         sendSuccess(res, {message: "Login successful", data: {token, user: shrinkUser(user)}});
         return;
     } catch (error) {
@@ -80,10 +81,10 @@ export const resendOTP = async (req: Request, res: Response) => {
             return;
         }
 
+        await redis.set(`reject:${token}`, "true", "EX", 300);
         const { otp, hashedOTP } = await OTP.generateOTP();
-        const newToken = jwt.create({ ...data, hashedOTP }, {expiresIn: "5m", algorithm: "ES384"});
+        const newToken = jwt.create({ name: data.name, displayName: data.displayName, email: data.email, password: data.password, hashedOTP: hashedOTP }, {expiresIn: "5m", algorithm: "HS256"});
         sendSuccess(res, {message: "OTP sent to email", data: {token: newToken}});
-
 
         await each(3, async () => {
             const isSend = await sendEmail(data.email, "Your OTP is " + otp);
@@ -109,6 +110,13 @@ export const verifyOTP = async (req: Request, res: Response) => {
             return;
         }
 
+        const isValidToken = await redis.get(`reject:${token}`);
+
+        if (isValidToken !== null) {
+            sendError(res, {message: "Invalid token"});
+            return;
+        }
+
         const data = jwt.verify(token) as { name: string, displayName: string, email: string, password: string, hashedOTP: string };
         if (!data) {
             sendError(res, {message: "Invalid token"});
@@ -124,7 +132,7 @@ export const verifyOTP = async (req: Request, res: Response) => {
         const user = new UserModel({...data});
         await user.save();
 
-        const userToken = jwt.create({id: user._id, name: user.displayName}, {expiresIn: "30d", algorithm: "HS256"});
+        const userToken = jwt.create({id: user._id, name: user.displayName}, {expiresIn: "7d", algorithm: "HS256"});
         sendSuccess(res, {message: "User registered successfully", data: {user: shrinkUser(user), token: userToken}});
     } catch (error) {
         console.error(error);
