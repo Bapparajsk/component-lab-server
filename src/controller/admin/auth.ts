@@ -8,18 +8,20 @@ const login = async (req: Request, res: Response) => {
         const adminPassword = process.env.ADMIN_PASSWORD;
 
         if (!adminEmail || !adminPassword) {
-            throw new Error("Admin credentials are not set");
+            sendError(res, { errors: ["Admin credentials not set"] });
+            return;
         }
 
         if (adminEmail !== email || adminPassword !== password) {
-            throw new Error("Invalid email or password");
+            sendError(res, { errors: ["Invalid email or password"] });
+            return;
         }
 
         const token = jwt.create({ email }); // Assuming jwt.create returns a string token.
         sendSuccess(res, { message: "Login successful", data: { token } });
     } catch (error) {
         console.error(error);
-        sendError(res, { errors: [error || "Unknown error"] });
+        sendError(res, { errors: ["Unknown error"] });
     }
 };
 

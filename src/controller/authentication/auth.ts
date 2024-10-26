@@ -33,7 +33,7 @@ export const login = async (req: Request, res: Response) => {
         return;
     } catch (error) {
         console.error(error);
-        sendError(res, {message: "Internal server error", errors: [error]});
+        sendError(res, {message: "Internal server error"});
     }
 };
 
@@ -44,7 +44,7 @@ export const register = async (req: Request, res: Response) => {
 
         const [error, isValid] = validData({name, displayName, email, password});
         if (error || !isValid) {
-            sendError(res, {message: "Invalid data", errors: [error]});
+            sendError(res, {message: "Invalid data", name: "client"});
             return;
         }
 
@@ -55,7 +55,7 @@ export const register = async (req: Request, res: Response) => {
         await sendOtpQueue({email, otp});
     } catch (error) {
         console.error(error);
-        sendError(res, {message: "Internal server error", errors: [error]});
+        sendError(res, {message: "Internal server error"});
     }
 };
 
@@ -82,7 +82,7 @@ export const resendOTP = async (req: Request, res: Response) => {
         return;
     } catch (error) {
         console.error(error);
-        sendError(res, {message: "Internal server error", errors: [error]});
+        sendError(res, {message: "Internal server error"});
     }
 };
 
@@ -120,7 +120,7 @@ export const verifyOTP = async (req: Request, res: Response) => {
         sendSuccess(res, {message: "User registered successfully", data: {user: shrinkUser(user), token: userToken}});
     } catch (error) {
         console.error(error);
-        sendError(res, {message: "Internal server error", errors: [error]});
+        sendError(res, {message: "Internal server error"});
     }
 };
 

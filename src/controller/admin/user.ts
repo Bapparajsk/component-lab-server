@@ -9,7 +9,7 @@ const getUserList = async (req: Request, res: Response) => {
         sendSuccess(res, { message: 'User list', data: { users } });
     } catch (e) {
         console.error(e);
-        sendError(res, { errors: [e || 'Unknown error']});
+        sendError(res, { errors: ['Unknown error']});
     }
 };
 
