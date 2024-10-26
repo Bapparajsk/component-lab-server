@@ -36,9 +36,15 @@ interface IUser extends Document {
     updatedAt: Date;
 }
 
+interface UserToken {
+    id: string;
+    name: string;
+}
+
 export  {
     Friends,
     IUser,
     Links,
-    PostType
+    PostType,
+    UserToken
 };

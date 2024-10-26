@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { sendError, jwt } from "../utils";
-import {IUser} from "../types/user";
+import {UserToken} from "../types/user";
 
 export const userAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -11,7 +11,7 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction) 
         }
 
         // Verify token
-        const decoded = jwt.verify(token) as IUser;
+        const decoded = jwt.verify(token) as UserToken;
         if (!decoded) {
             throw new Error("Unauthorized");
         }
