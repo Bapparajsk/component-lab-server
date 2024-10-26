@@ -1,12 +1,12 @@
 import {Request, Response} from 'express';
-import {jwt, sendError, sendSuccess, OTP, sendEmail} from "../../utils";
+import {jwt, OTP, sendError, sendSuccess} from "../../utils";
 import {comparePassword, isEmail} from "../../validators";
 import {validData} from "../../validators/newUser";
 import {IUser} from "../../types/user";
 import {UserModel} from "../../model";
 import {shrinkUser} from "../../helper/shrinkUser";
-import { each } from "../../lib/each";
-import { redis } from "../../config";
+import {sendOtpQueue} from "../../lib/bullmqProducer";
+import {redis} from "../../config";
 
 export const login = async (req: Request, res: Response) => {
     try {
@@ -52,15 +52,7 @@ export const register = async (req: Request, res: Response) => {
         const token = jwt.create({ name, displayName, email, password, hashedOTP }, {expiresIn: "5m", algorithm: "HS256"});
         sendSuccess(res, {message: "OTP sent to email", data: {token}});
 
-        await each(3, async () => {
-            const isSend = await sendEmail(email, "Your OTP is " + otp);
-            if (isSend) {
-                console.log("OTP sent to email");
-                return true;
-            }
-            console.error("Failed to send OTP");
-            return false;
-        });
+        await sendOtpQueue({email, otp});
     } catch (error) {
         console.error(error);
         sendError(res, {message: "Internal server error", errors: [error]});
@@ -86,15 +78,7 @@ export const resendOTP = async (req: Request, res: Response) => {
         const newToken = jwt.create({ name: data.name, displayName: data.displayName, email: data.email, password: data.password, hashedOTP: hashedOTP }, {expiresIn: "5m", algorithm: "HS256"});
         sendSuccess(res, {message: "OTP sent to email", data: {token: newToken}});
 
-        await each(3, async () => {
-            const isSend = await sendEmail(data.email, "Your OTP is " + otp);
-            if (isSend) {
-                console.log("OTP sent to email");
-                return true;
-            }
-            console.error("Failed to send OTP");
-            return false;
-        });
+        await sendOtpQueue({email: data.email, otp});
         return;
     } catch (error) {
         console.error(error);
