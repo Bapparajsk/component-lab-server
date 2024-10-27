@@ -16,6 +16,7 @@ app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.json());
 app.use("/admin", route_1.admin);
 app.use("/auth", route_1.auth);
+app.use("/user", route_1.user);
 app.listen(PORT, () => {
     console.log(`Server is running on port http://127.0.0.1:${PORT}`);
 });

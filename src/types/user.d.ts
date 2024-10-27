@@ -8,7 +8,6 @@ interface Links extends Document {
 interface PostType extends Document {
     id: Schema.Types.ObjectId,
     title: string,
-    tags?: [{title: string}],
 }
 
 interface Friends extends Document {

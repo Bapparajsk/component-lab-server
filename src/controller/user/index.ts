@@ -1,5 +1,7 @@
-import {getUser}  from "./getUser";
+import {getUser, getUserPost, getFans}  from "./getUser";
 
 export {
-    getUser
+    getUser,
+    getUserPost,
+    getFans
 };

@@ -15,5 +15,6 @@ export interface Post extends Document {
     description: string,
     content: string,
     likes: number,
+    codePreview: number,
     fileGroup: FileGroup[],
 }

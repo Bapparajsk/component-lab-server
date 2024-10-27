@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import {UserSchemas} from "../types";
 
 
-
 const LinksSchema = new Schema<UserSchemas.Links>({
     title: {type: String, required: true},
     url: {type: String, required: true},
@@ -12,7 +11,6 @@ const LinksSchema = new Schema<UserSchemas.Links>({
 const PostTypeSchema = new Schema<UserSchemas.PostType>({
     id: {type: Schema.Types.ObjectId, required: true},
     title: {type: String, required: true},
-    tags: [{title: {type: String}}],
 });
 
 const FriendsSchema = new Schema<UserSchemas.Friends>({
@@ -34,6 +32,7 @@ const UserSchema = new Schema<UserSchemas.IUser>({
     followers: {type: [FriendsSchema], default: []},
     following: {type: [FriendsSchema], default: []},
     likedPosts: {type: [PostTypeSchema], default: []},
+    language: {type: [LinksSchema], default: []},
     liked: {type: Number, default: 0},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date, default: Date.now},

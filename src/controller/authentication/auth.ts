@@ -4,7 +4,7 @@ import {comparePassword, isEmail} from "../../validators";
 import {validData} from "../../validators/newUser";
 import {IUser} from "../../types/user";
 import {UserModel} from "../../model";
-import {shrinkUser} from "../../helper/shrinkUser";
+import {user} from "../../helper/user";
 import {sendOtpQueue} from "../../lib/bullmqProducer";
 import {redis} from "../../config";
 
@@ -28,8 +28,8 @@ export const login = async (req: Request, res: Response) => {
             return;
         }
 
-        const token = jwt.create({id: user._id, name: user.displayName}, {expiresIn: "7d", algorithm: "ES384"});
-        sendSuccess(res, {message: "Login successful", data: {token, user: shrinkUser(user)}});
+        const token = jwt.create({id: user._id, name: user.displayName}, {expiresIn: "7d", algorithm: "HS256"});
+        sendSuccess(res, {message: "Login successful", data: {token, user: user(user)}});
         return;
     } catch (error) {
         console.error(error);
@@ -117,7 +117,7 @@ export const verifyOTP = async (req: Request, res: Response) => {
         await user.save();
 
         const userToken = jwt.create({id: user._id, name: user.displayName}, {expiresIn: "7d", algorithm: "HS256"});
-        sendSuccess(res, {message: "User registered successfully", data: {user: shrinkUser(user), token: userToken}});
+        sendSuccess(res, {message: "User registered successfully", data: {user: user(user), token: userToken}});
     } catch (error) {
         console.error(error);
         sendError(res, {message: "Internal server error"});
