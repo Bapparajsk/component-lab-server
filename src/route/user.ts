@@ -1,6 +1,7 @@
 import {Router} from "express";
 import {userAuth} from "../middleware";
 import {getUser, getUserPost, getFans} from "../controller/user";
+import { userUpdate } from "../controller/update";
 
 const user = Router();
 
@@ -12,5 +13,7 @@ user.get("/post", userAuth, getUserPost);
 
 // *Get user fans
 user.get("/fans", userAuth, getFans);
+
+user.patch("/update", userAuth, userUpdate);
 
 export default user;

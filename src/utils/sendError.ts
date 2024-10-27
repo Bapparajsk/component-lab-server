@@ -2,7 +2,7 @@ import { Response } from "express";
 
 type ErrorTypes = {
     name?: "server" | "client" | "unauthorized" | "notFound" | "forbidden";
-    message?: string;
+    message?: string | null;
     errors?: any[];
 }
 

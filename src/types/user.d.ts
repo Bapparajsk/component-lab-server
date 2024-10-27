@@ -1,16 +1,16 @@
 import { Document, Schema } from "mongoose";
 
-interface Links extends Document {
+interface Links {
     title: string;
     url: string;
 }
 
-interface PostType extends Document {
+interface PostType {
     id: Schema.Types.ObjectId,
     title: string,
 }
 
-interface Friends extends Document {
+interface Friends{
     id: Schema.Types.ObjectId,
     displayName: string,
     userImage: string,
@@ -24,7 +24,7 @@ interface IUser extends Document {
     userImage: string;
     gender: "he/him" | "she/her";
     description: string;
-    links: Linkes[];
+    links: Links[];
     posts: PostType[];
     followers: Friends[];
     following: Friends[];
