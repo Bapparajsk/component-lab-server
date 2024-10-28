@@ -52,7 +52,7 @@ export const register = async (req: Request, res: Response) => {
         const token = jwt.create({ name, displayName, email, password, hashedOTP }, {expiresIn: "5m", algorithm: "HS256"});
         sendSuccess(res, {message: "OTP sent to email", data: {token}});
 
-        sendOtpQueue({email, otp});
+        sendOtpQueue({email, otp}).catch(console.error);
         return;
     } catch (error) {
         console.error(error);

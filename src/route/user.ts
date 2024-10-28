@@ -16,4 +16,5 @@ user.get("/fans", userAuth, getFans);
 
 user.patch("/update", userAuth, userUpdate);
 
+
 export default user;

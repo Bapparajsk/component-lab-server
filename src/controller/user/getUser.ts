@@ -9,7 +9,10 @@ import {redis} from "../../config";
 export const getUser = async (req: Request, res: Response) => {
     try {
         const user = req.User as UserToken;
-
+        if (!user) {
+            sendError(res, {message: "Invalid token", name: "client", errors: ["invalid token"]});
+            return;
+        }
         const [error, userFromCache] = await fetchUser(user.id);
         if (error || !userFromCache) {
             sendError(res, {message: error || "User not found", name: "client", errors: ["invalid token"]});
@@ -29,11 +32,16 @@ export const getUserPost = async (req: Request, res: Response) => {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 15;
         const env = req.query.env as string || "user";
-        const user = req.User as UserToken;
 
         // *Validate query parameter
         if (page < 1 || limit < 1 || limit > 20 || !["user", "liked"].includes(env)) {
             sendError(res, {message: "Invalid query parameter", name: "client"});
+            return;
+        }
+
+        const user = req.User as UserToken;
+        if (!user) {
+            sendError(res, {message: "Invalid token", name: "client", errors: ["invalid token"]});
             return;
         }
 
@@ -83,10 +91,14 @@ export const getUserPost = async (req: Request, res: Response) => {
 export const getFans = async (req: Request, res: Response) => {
     try {
         const env = req.query.env as string || "followers";
-        const user = req.User as UserToken;
-
         if (!["followers", "following"].includes(env)) {
             sendError(res, {message: "invalid query", name: "client"});
+            return;
+        }
+
+        const user = req.User as UserToken;
+        if (!user) {
+            sendError(res, {message: "Invalid token", name: "client", errors: ["invalid token"]});
             return;
         }
 

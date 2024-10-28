@@ -35,7 +35,7 @@ export const fetchUser = async (id: string): Promise<[string | null, IUser | nul
             return ["User not found", null];
         }
 
-        await redis.set(`get-user:${id}`, JSON.stringify(ShrinkUser(userFromCache)), "EX", 60 * 30); // 30 minutes
+        await redis.set(`get-user:${userFromCache._id}`, JSON.stringify(ShrinkUser(userFromCache)), "EX", 60 * 30); // 30 minutes
         return [null, userFromCache];
     } catch (e) {
         console.error(e);
