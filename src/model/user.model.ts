@@ -19,6 +19,16 @@ const FriendsSchema = new Schema<UserSchemas.Friends>({
     userImage: {type: String, required: true},
 });
 
+const PostUploadListSchema = new Schema<UserSchemas.PostUploadList>({
+    id: {type: String, required: false},
+    url: {type: String, required: true},
+    description: {type: String, required: false},
+    displayName: {type: String, required: true},
+    uploadDate: {type: Date, default: Date.now},
+    verifyDate: {type: Date, default: null},
+    progress: {type: String, required: true},
+});
+
 const UserSchema = new Schema<UserSchemas.IUser>({
     name: {type: String, required: true},
     displayName: {type: String, required: true},
@@ -29,6 +39,9 @@ const UserSchema = new Schema<UserSchemas.IUser>({
     description: {type: String, required: false},
     links: {type: [LinksSchema], default: []},
     posts: {type: [PostTypeSchema], default: []},
+    postUploadList: {type: Map, of: PostUploadListSchema, default: new Map()},
+    postUploadApprovedList: {type: Map, of: PostUploadListSchema, default: new Map()},
+    postUploadRejectList: {type: Map, of: PostUploadListSchema, default: new Map()},
     followers: {type: [FriendsSchema], default: []},
     following: {type: [FriendsSchema], default: []},
     likedPosts: {type: [PostTypeSchema], default: []},

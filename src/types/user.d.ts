@@ -16,6 +16,16 @@ interface Friends{
     userImage: string,
 }
 
+interface PostUploadList {
+    id: string | null,
+    url: string,
+    description?: string,
+    displayName: string,
+    uploadDate: Date,
+    verifyDate: Date | null,
+    progress: "pending" | "approved" | "creating-files" | "uploaded" | "rejected";
+}
+
 interface IUser extends Document {
     name: string;
     displayName: string;
@@ -29,6 +39,9 @@ interface IUser extends Document {
     followers: Friends[];
     following: Friends[];
     likedPosts: PostType[];
+    postUploadList: Map<string, PostUploadList>;
+    postUploadApprovedList: Map<string, PostUploadList>;
+    postUploadRejectList: Map<string, PostUploadList>;
     liked: number;
     language: Links[];
     createdAt: Date;
@@ -45,5 +58,6 @@ export  {
     IUser,
     Links,
     PostType,
-    UserToken
+    UserToken,
+    PostUploadList
 };

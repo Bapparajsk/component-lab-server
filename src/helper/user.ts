@@ -3,7 +3,6 @@ import {redis} from '../config';
 import {UserModel} from "../model";
 import {updateEnv} from "../types/userUpdate";
 import {comparePassword, isValidPassword} from "../validators";
-import userModel from "../model/user.model";
 
 export const ShrinkUser = (user: IUser) => {
     return {
@@ -26,7 +25,7 @@ export const fetchUser = async (id: string): Promise<[string | null, IUser | nul
     try {
         let userFromCache = await redis.get(`get-user:${id}`) as string | IUser | null;
         if (typeof userFromCache === "string") {
-            userFromCache = new UserModel(JSON.parse(userFromCache) as IUser);
+            userFromCache = JSON.parse(userFromCache) as IUser;
             return [null, userFromCache];
         }
 
@@ -45,7 +44,7 @@ export const fetchUser = async (id: string): Promise<[string | null, IUser | nul
 
 export const updateUserDetails = async ({env, body, id}: updateEnv): Promise<[string| null, string | null]> => {
     try {
-        const user = await userModel.findById(id);
+        const user= await UserModel.findById(id);
         if (!user) {
             return ["User not found", null];
         }

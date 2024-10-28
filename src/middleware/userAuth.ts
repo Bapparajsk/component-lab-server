@@ -9,13 +9,11 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction) 
         if (!token) {
             throw new Error("Unauthorized");
         }
-
         // Verify token
         const decoded = jwt.verify(token) as UserToken;
         if (!decoded) {
             throw new Error("Unauthorized");
         }
-
         // Attach user to request object
         req.User = decoded;
         next();

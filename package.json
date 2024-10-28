@@ -4,7 +4,7 @@
   "main": "./dist/app.js",
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node ./dist/app.js\"",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint ./src",
     "build": "tsc",
     "start": "node ./dist/app.js"
   },
@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "bullmq": "^5.21.2",
     "cors": "^2.8.5",
