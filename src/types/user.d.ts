@@ -18,12 +18,13 @@ interface Friends{
 
 interface PostUploadList {
     id: string | null,
+    title: string,
     url: string,
     description?: string,
     displayName: string,
     uploadDate: Date,
     verifyDate: Date | null,
-    progress: "pending" | "approved" | "creating-files" | "uploaded" | "rejected";
+    progress: "pending" | "approved" | "creating-files" | "completed" | "rejected";
 }
 
 interface IUser extends Document {
@@ -40,7 +41,7 @@ interface IUser extends Document {
     following: Friends[];
     likedPosts: PostType[];
     postUploadList: Map<string, PostUploadList>;
-    postUploadApprovedList: Map<string, PostUploadList>;
+    postUploadUploadedList: Map<string, PostUploadList>;
     postUploadRejectList: Map<string, PostUploadList>;
     liked: number;
     language: Links[];

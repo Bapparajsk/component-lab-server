@@ -1,5 +1,8 @@
-import { userUpdate } from "./userUpdate";
+import { userUpdate, updateEmail, verifyEmail, resendOtp } from "./userUpdate";
 
 export {
-    userUpdate
+    userUpdate,
+    updateEmail,
+    verifyEmail,
+    resendOtp,
 };

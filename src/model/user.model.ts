@@ -21,6 +21,7 @@ const FriendsSchema = new Schema<UserSchemas.Friends>({
 
 const PostUploadListSchema = new Schema<UserSchemas.PostUploadList>({
     id: {type: String, required: false},
+    title: {type: String, required: true},
     url: {type: String, required: true},
     description: {type: String, required: false},
     displayName: {type: String, required: true},
@@ -40,7 +41,7 @@ const UserSchema = new Schema<UserSchemas.IUser>({
     links: {type: [LinksSchema], default: []},
     posts: {type: [PostTypeSchema], default: []},
     postUploadList: {type: Map, of: PostUploadListSchema, default: new Map()},
-    postUploadApprovedList: {type: Map, of: PostUploadListSchema, default: new Map()},
+    postUploadUploadedList: {type: Map, of: PostUploadListSchema, default: new Map()},
     postUploadRejectList: {type: Map, of: PostUploadListSchema, default: new Map()},
     followers: {type: [FriendsSchema], default: []},
     following: {type: [FriendsSchema], default: []},

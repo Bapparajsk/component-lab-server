@@ -1,4 +1,4 @@
-import { IUser } from '../types/user';
+import {IUser, UserToken} from '../types/user';
 import {redis} from '../config';
 import {UserModel} from "../model";
 import {updateEnv} from "../types/userUpdate";
@@ -18,6 +18,11 @@ export const ShrinkUser = (user: IUser) => {
         following: user.following.length,
         likedPosts: user.likedPosts.length,
         language: user.language,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        postUploadList: user.postUploadList,
+        postUploadUploadedList: user.postUploadUploadedList,
+        postUploadRejectList: user.postUploadRejectList,
     };
 };
 
@@ -36,6 +41,22 @@ export const fetchUser = async (id: string): Promise<[string | null, IUser | nul
 
         await redis.set(`get-user:${userFromCache._id}`, JSON.stringify(ShrinkUser(userFromCache)), "EX", 60 * 30); // 30 minutes
         return [null, userFromCache];
+    } catch (e) {
+        console.error(e);
+        return ["Internal Server Error", null];
+    }
+};
+
+export const fetchUserFromDatabase = async (user: UserToken | undefined | null): Promise<[string | null, IUser | null]> => {
+    try {
+        if (!user || !user.id) {
+            return ["User not found", null];
+        }
+
+        const userData = await UserModel.findById(user.id) as IUser;
+        if (!userData) return ["User not found", null];
+
+        return [null, userData];
     } catch (e) {
         console.error(e);
         return ["Internal Server Error", null];

@@ -9,20 +9,27 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const route_1 = require("./route");
-const model_1 = require("./model");
 const app = (0, express_1.default)();
 const PORT = Number(process.env.PORT) || 3000;
 app.use((0, cors_1.default)());
 app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.json());
-app.get("/", async (req, res) => {
-    await model_1.UserModel.updateMany({}, { $set: { postUploadRejectList: new Map() } });
-    res.json({ message: "Hello World" });
-});
 app.use("/admin", route_1.admin);
 app.use("/auth", route_1.auth);
 app.use("/user", route_1.user);
 app.use("/post", route_1.post);
+/*
+if (cluster.isPrimary) {  // this is the primary instance of the cluster
+    console.log(`Primary ${process.pid} is running`);
+    for (let i = 0; i < os.cpus().length; i++) {
+        cluster.fork();
+    }
+} else {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port http://127.0.0.1:${PORT}`);
+  });
+}
+*/
 app.listen(PORT, () => {
     console.log(`Server is running on port http://127.0.0.1:${PORT}`);
 });
