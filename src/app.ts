@@ -35,3 +35,5 @@ if (cluster.isPrimary) {  // this is the primary instance of the cluster
 app.listen(PORT, () => {
     console.log(`Server is running on port http://127.0.0.1:${PORT}`);
 });
+
+export default app;

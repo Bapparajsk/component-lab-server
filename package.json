@@ -6,7 +6,8 @@
     "dev": "tsc-watch --onSuccess \"node ./dist/app.js\"",
     "lint": "eslint ./src",
     "build": "tsc",
-    "start": "node ./dist/app.js"
+    "start": "node ./dist/app.js",
+    "cluster": "node ./dist/server.js"
   },
   "keywords": [],
   "author": "",

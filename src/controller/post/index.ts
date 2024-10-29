@@ -1,8 +1,9 @@
 import {addNewPost, getPostsList} from "./upload";
-import {updatePost} from "./update";
+import {updatePost, updateUrl} from "./update";
 
 export {
     addNewPost,
     getPostsList,
-    updatePost
+    updatePost,
+    updateUrl
 };
