@@ -57,15 +57,15 @@ export const addPost = async (req: Request, res: Response) => {
             files: { title: string, files: { name: string, type: string, content: string }[] }[],
         };
 
-        if (!id || !tags || !files) return sendError(res, {
-            message: "Invalid request",
-            name: "client",
-            errors: ["id, tags, files are required"]
-        });
+        if (!id || !tags || !files) {
+            sendError(res, { message: "Invalid request", name: "client", errors: ["id, tags, files are required"] });
+            return;
+        }
 
         const {isValid, tempPost, userData, postUploadListData, key} = await isValidPost(id);
         if (!isValid || !tempPost || !userData || !postUploadListData || !key) {
-            return sendError(res, {message: "Invalid request", name: "client", errors: ["Invalid id"]});
+            sendError(res, {message: "Invalid request", name: "client", errors: ["Invalid id"]});
+            return;
         }
 
         const newPOst = new PostModel({
@@ -83,6 +83,7 @@ export const addPost = async (req: Request, res: Response) => {
         await updateUserPostLists(userData, key, postUploadListData, "postCompletedList");
         sendSuccess(res, {message: "Post added successfully"});
         PostUploadUserModel.findByIdAndDelete(id).catch(console.error);
+        return;
     } catch (e) {
         console.error(e);
         sendError(res, {message: "Internal server error"});
@@ -99,7 +100,8 @@ export const rejectPost = async (req: Request, res: Response) => {
 
         const {isValid, tempPost, userData, postUploadListData, key} = await isValidPost(id);
         if (!isValid || !tempPost || !userData || !postUploadListData || !key) {
-            return sendError(res, {message: "Invalid request", name: "client", errors: ["Invalid id"]});
+            sendError(res, {message: "Invalid request", name: "client", errors: ["Invalid id"]});
+            return;
         }
 
         await updateUserPostLists(userData, key, postUploadListData, "postRejectList");
@@ -133,7 +135,8 @@ export const postProspering = async (req: Request, res: Response) => {
 
         const {isValid, tempPost, userData, postUploadListData, key} = await isValidPost(id);
         if (!isValid || !tempPost || !userData || !postUploadListData || !key) {
-            return sendError(res, {message: "Invalid request", name: "client", errors: ["Invalid id"]});
+            sendError(res, {message: "Invalid request", name: "client", errors: ["Invalid id"]});
+            return;
         }
 
         postUploadListData.progress = env;
