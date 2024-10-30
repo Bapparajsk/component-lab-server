@@ -1,4 +1,13 @@
-import { Response } from "express";
+import { Response } from 'express';
+
+type Data = {
+    message: string;
+    data?: any;
+};
+
+export const sendSuccess = (res:Response, data: Data ) => {
+    return res.status(200).json(data);
+};
 
 type ErrorTypes = {
     name?: "server" | "client" | "unauthorized" | "notFound" | "forbidden";
@@ -6,7 +15,7 @@ type ErrorTypes = {
     errors?: any[];
 }
 
-const sendError = (response: Response,{
+export const sendError = (response: Response,{
     name = "server",
     message = "Internal Server Error",
     errors
@@ -24,5 +33,3 @@ const sendError = (response: Response,{
             return response.status(500).json({ message });
     }
 };
-
-export default sendError;

@@ -20,9 +20,6 @@ export const ShrinkUser = (user: IUser) => {
         language: user.language,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        postUploadList: user.postUploadList,
-        postUploadUploadedList: user.postUploadUploadedList,
-        postUploadRejectList: user.postUploadRejectList,
     };
 };
 

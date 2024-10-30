@@ -13,8 +13,9 @@ export interface Post extends Document {
     userId: Schema.Types.ObjectId,
     title: string,
     description: string,
-    content: string,
     likes: number,
     codePreview: number,
     fileGroup: FileGroup[],
+    tags: string[],
+    createdAt: Date,
 }

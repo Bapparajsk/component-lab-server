@@ -39,7 +39,7 @@ const UserSchema = new Schema<UserSchemas.IUser>({
     gender: {type: String, required: false},
     description: {type: String, required: false},
     links: {type: [LinksSchema], default: []},
-    posts: {type: [PostTypeSchema], default: []},
+    posts: {type: Map, of: String, default: new Map()},
     postUploadList: {type: Map, of: PostUploadListSchema, default: new Map()},
     postUploadUploadedList: {type: Map, of: PostUploadListSchema, default: new Map()},
     postUploadRejectList: {type: Map, of: PostUploadListSchema, default: new Map()},

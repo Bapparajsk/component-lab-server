@@ -1,6 +1,5 @@
 import jwt from "./token";
-import sendError from "./sendError";
-import sendSuccess from "./sendSuccess";
+import {sendError, sendSuccess} from "./response";
 import OTP from "./otp";
 import {sendEmail}  from "./sendEmail";
 

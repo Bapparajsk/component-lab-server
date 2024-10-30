@@ -5,10 +5,6 @@ interface Links {
     url: string;
 }
 
-interface PostType {
-    id: Schema.Types.ObjectId,
-    title: string,
-}
 
 interface Friends{
     id: Schema.Types.ObjectId,
@@ -36,7 +32,7 @@ interface IUser extends Document {
     gender: "he/him" | "she/her";
     description: string;
     links: Links[];
-    posts: PostType[];
+    posts: Map<string, string | Schema.Types.ObjectId>;
     followers: Friends[];
     following: Friends[];
     likedPosts: PostType[];
