@@ -121,11 +121,13 @@ export const rejectPost = async (req: Request, res: Response) => {
     }
 };
 
-export const approvePost = async (req: Request, res: Response) => {
+export const postProspering = async (req: Request, res: Response) => {
     try {
-        const {id} = req.body;
-        if (!id || !id.trim() || typeof id !== "string") {
-            sendError(res, {message: "Invalid request", name: "client", errors: ["id is required"]});
+        const id = req.query.id;
+        const env = req.query.env;
+
+        if (!id || typeof id !== "string" || !id.trim() || !env || typeof env !== "string" || !env.trim() || env !== "approved" && env !== "creating-files") {
+            sendError(res, {message: "Invalid request", name: "client", errors: ["id, env is required"]});
             return;
         }
 
@@ -134,7 +136,7 @@ export const approvePost = async (req: Request, res: Response) => {
             return sendError(res, {message: "Invalid request", name: "client", errors: ["Invalid id"]});
         }
 
-        postUploadListData.progress = "approved";
+        postUploadListData.progress = env;
         userData.postUploadList.set(key, postUploadListData);
         await userData.save();
         sendSuccess(res, {message: "Post approved successfully"});
