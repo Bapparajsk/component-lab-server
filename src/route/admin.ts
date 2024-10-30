@@ -1,9 +1,17 @@
 import {Router} from "express";
-import { login, validate, getUserList } from "../controller/admin";
+import {getUserList, login} from "../controller/admin";
+import {isAdmin} from "../middleware/isAdmin";
+import {addPost} from "../controller/admin/post";
 
 const admin = Router();
 
-admin.post("/login", login); // Assuming login is a properly typed controller function.
-admin.get("/users", validate, getUserList); // Assuming validate and getUserList are properly typed controller functions.
+// * Assuming login is a properly typed controller function.
+admin.post("/login", login);
+
+// * Assuming validate and getUserList are properly typed controller functions.
+admin.get("/users", isAdmin, getUserList);
+
+// * Assuming addPost is a properly typed controller function.
+admin.post("/posts", isAdmin, addPost);
 
 export default admin;

@@ -32,13 +32,13 @@ interface IUser extends Document {
     gender: "he/him" | "she/her";
     description: string;
     links: Links[];
-    posts: Map<string, string | Schema.Types.ObjectId>;
+    posts: Map<string | unknown, string>;
     followers: Friends[];
     following: Friends[];
     likedPosts: PostType[];
     postUploadList: Map<string, PostUploadList>;
-    postUploadUploadedList: Map<string, PostUploadList>;
-    postUploadRejectList: Map<string, PostUploadList>;
+    postCompletedList: Map<string, PostUploadList>;
+    postRejectList: Map<string, PostUploadList>;
     liked: number;
     language: Links[];
     createdAt: Date;
