@@ -33,9 +33,9 @@ interface IUser extends Document {
     description: string;
     links: Links[];
     posts: Map<string | unknown, string>;
-    followers: Friends[];
-    following: Friends[];
-    likedPosts: PostType[];
+    followers: Map<string | unknown, Friends>;
+    following: Map<string | unknown, Friends>;
+    likedPosts: Map<string | unknown, string>;
     postUploadList: Map<string, PostUploadList>;
     postCompletedList: Map<string, PostUploadList>;
     postRejectList: Map<string, PostUploadList>;

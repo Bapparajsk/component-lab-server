@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import {sendError, sendSuccess} from "../../utils";
 import {fetchUser, ShrinkUser} from "../../helper/user";
 import {IUser, UserToken} from "../../types/user";
-import {PostModel} from "../../model";
+import {PostModel, UserModel} from "../../model";
 import {redis} from "../../config";
 
 
@@ -54,9 +54,9 @@ export const getUserPost = async (req: Request, res: Response) => {
         }
 
         // *Fetch data from database
-        const [error, userFromCache] = await fetchUser(user.id);
-        if (error || !userFromCache) {
-            sendError(res, {message: error || "User not found", name: "client", errors: ["invalid token"]});
+        const userFromCache = await UserModel.findById(user.id);
+        if (!userFromCache) {
+            sendError(res, {message: "User not found", name: "client", errors: ["invalid token"]});
             return;
         }
 
@@ -67,14 +67,14 @@ export const getUserPost = async (req: Request, res: Response) => {
         }
 
         // *Paginate the data
-        const total = posts.length;
+        const total = posts.size;
         const totalPages = Math.ceil(total / limit);
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
 
         // *Fetch the data from database
         const PostData = await PostModel
-            .find({_id: {$in: posts.slice(startIndex, endIndex)}})
+            .find({_id: {$in: Array.from(posts).slice(startIndex, endIndex)}})
             .populate("user")
             .exec();
         const result = { total, page, totalPages, posts: PostData };

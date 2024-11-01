@@ -59,7 +59,7 @@ export const updatePost = async (req: Request, res: Response) => {
         };
 
         updatePostInMap(userData.postUploadList);
-        updatePostInMap(userData.postUploadUploadedList);
+        updatePostInMap(userData.postCompletedList);
 
         await redis.set(`get-user:${userData._id}`, JSON.stringify(userData), "EX", 60 * 30);
         await userData.save();

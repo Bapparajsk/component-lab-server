@@ -94,8 +94,8 @@ export const getPostsList = async (req: Request, res: Response) => {
         if (env === "all") {
             postList.push(
                 ...userData.postUploadList.values(),
-                ...userData.postUploadUploadedList.values(),
-                ...userData.postUploadRejectList.values()
+                ...userData.postCompletedList.values(),
+                ...userData.postRejectList.values()
             );
         } else if (env === "pending" || env === "approved" || env === "creating-files") {
             postList.push(...userData.postUploadList.values());
