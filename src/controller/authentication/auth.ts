@@ -12,7 +12,7 @@ export const login = async (req: Request, res: Response) => {
     try {
         const {email, password} = req.body;
         if (!email || !password || !isEmail(email)) {
-            sendError(res, {message: "Email and password are required"});
+            sendError(res, {message: "Email and password are required", name: "client"});
             return;
         }
 
@@ -79,13 +79,13 @@ export const resendOTP = async (req: Request, res: Response) => {
     try {
         const { token } = req.body;
         if (!token) {
-            sendError(res, {message: "Email is required"});
+            sendError(res, {message: "token is required", name: "notFound"});
             return;
         }
 
         const data = jwt.verify(token) as { name: string, displayName: string, email: string, password: string, hashedOTP: string };
         if (!data) {
-            sendError(res, {message: "Invalid token"});
+            sendError(res, {message: "Invalid token", name: "client"});
             return;
         }
 
@@ -106,26 +106,26 @@ export const verifyOTP = async (req: Request, res: Response) => {
     try {
         const { otp, token } = req.body;
         if (!otp || !token) {
-            sendError(res, {message: "OTP is required"});
+            sendError(res, {message: "OTP is required", name: "client"});
             return;
         }
 
         const isValidToken = await redis.get(`reject:${token}`);
 
         if (isValidToken !== null) {
-            sendError(res, {message: "Invalid token"});
+            sendError(res, {message: "Invalid token", name: "client"});
             return;
         }
 
         const data = jwt.verify(token) as { name: string, displayName: string, email: string, password: string, hashedOTP: string };
         if (!data) {
-            sendError(res, {message: "Invalid token"});
+            sendError(res, {message: "Invalid token", name: "client"});
             return;
         }
 
         const isMatch = await OTP.verifyOTP(otp, data.hashedOTP);
         if (!isMatch) {
-            sendError(res, {message: "Invalid OTP"});
+            sendError(res, {message: "Invalid OTP", name: "client"});
             return;
         }
 
