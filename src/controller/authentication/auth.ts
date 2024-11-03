@@ -18,13 +18,13 @@ export const login = async (req: Request, res: Response) => {
 
         const user: IUser | null = await UserModel.findOne({email});
         if (!user) {
-            sendError(res, {message: "invalid credential"});
+            sendError(res, {message: "invalid credential", name: "unauthorized"});
             return;
         }
 
         const isMatch = comparePassword(password, user.password);
         if (!isMatch) {
-            sendError(res, {message: "invalid credential"});
+            sendError(res, {message: "invalid credential", name: "unauthorized"});
             return;
         }
 
@@ -44,7 +44,7 @@ export const register = async (req: Request, res: Response) => {
 
         const [error, isValid] = validData({name, displayName, email, password});
         if (error || !isValid) {
-            sendError(res, {message: "Invalid data", name: "client"});
+            sendError(res, {message: "Invalid data", name: "client", errors: [error]});
             return;
         }
 

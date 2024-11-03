@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const sendError = (response, { name = "server", message = "Internal Server Error", errors }) => {
+    switch (name) {
+        case "client":
+            return response.status(400).json({ message, error: errors });
+        case "unauthorized":
+            return response.status(401).json({ message, error: errors });
+        case "notFound":
+            return response.status(404).json({ message, error: errors });
+        case "forbidden":
+            return response.status(403).json({ message, error: errors });
+        default:
+            return response.status(500).json({ message });
+    }
+};
+exports.default = sendError;

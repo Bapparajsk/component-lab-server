@@ -7,11 +7,13 @@ export const sendEmail = async (email: string, data: any) => {
         const mailOptions = {
             from:`"Component-lab" <codeking@code.com>`,
             to: email,
-            subject: data.subject,
-            text: data
+            ...data,
         };
 
+        console.log("Sending email");
         await transporter.sendMail(mailOptions);
+        console.log("Email sent successfully");
+        
         return true;
     } catch (e) {
         console.log(e);

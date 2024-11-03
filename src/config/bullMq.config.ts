@@ -8,7 +8,7 @@ const queueConfig: QueueOptions = {
 };
 
 const OtpSendQueue = new Queue("OtpSend", queueConfig);
-const MailSendQueue = new Queue("sendMail", queueConfig);
+const MailSendQueue = new Queue("SendMail", queueConfig);
 
 export default {
     OtpSendQueue,

@@ -3,7 +3,11 @@ import {ProducerForOtpQueue} from "../types/bullMq";
 
 export const sendOtpQueue = async ({ email, otp }: ProducerForOtpQueue): Promise<boolean> => {
     try {
-        await bullMq.OtpSendQueue.add("OtpSendToEmail", {email, otp});
+        console.log(email, otp, "OtpSend");
+        await bullMq.OtpSendQueue.add("OtpSend", {email, otp}, {
+            removeOnComplete: true,
+            removeOnFail: true,
+        });
         return true;
     } catch (e) {
         console.error("sendOtpQueue Field", e);
@@ -13,7 +17,8 @@ export const sendOtpQueue = async ({ email, otp }: ProducerForOtpQueue): Promise
 
 export const sendMailQueue = async ({email, data}: { email: string, data: any }): Promise<boolean> => {
     try {
-        await bullMq.MailSendQueue.add("MailSendToEmail", {email, data});
+        console.log(email, data, "sendMailQueue");
+        
         return true;
     } catch (e) {
         console.error("sendOtpQueueToPhone Field", e);
