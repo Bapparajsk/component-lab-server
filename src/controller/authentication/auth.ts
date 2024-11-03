@@ -1,4 +1,4 @@
-import {Request, Response} from 'express';
+import  {Request, Response} from 'express';
 import {jwt, OTP, sendError, sendSuccess} from "../../utils";
 import {comparePassword, isEmail} from "../../validators";
 import {validData} from "../../validators/newUser";
@@ -39,12 +39,27 @@ export const login = async (req: Request, res: Response) => {
 
 export const register = async (req: Request, res: Response) => {
     try {
-        console.log(req.body);
         const { name, displayName, email, password } = req.body;
 
         const [error, isValid] = validData({name, displayName, email, password});
         if (error || !isValid) {
             sendError(res, {message: "Invalid data", name: "client", errors: [error]});
+            return;
+        }
+
+        const user: IUser | null = await UserModel.findOne({$or: [{displayName}, {email}]});
+        if (user) {
+            let message = "";
+
+            if(user.displayName === displayName && user.email === email) {
+                message = "User already exist";
+            } else if (user.displayName === displayName) {
+                message = "Display name already exist";
+            } else {
+                message = "Email already exist";
+            }
+
+            sendError(res, {message, name: "client"});
             return;
         }
 

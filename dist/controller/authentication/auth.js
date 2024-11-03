@@ -37,11 +37,25 @@ const login = async (req, res) => {
 exports.login = login;
 const register = async (req, res) => {
     try {
-        console.log(req.body);
         const { name, displayName, email, password } = req.body;
         const [error, isValid] = (0, newUser_1.validData)({ name, displayName, email, password });
         if (error || !isValid) {
             (0, utils_1.sendError)(res, { message: "Invalid data", name: "client", errors: [error] });
+            return;
+        }
+        const user = await model_1.UserModel.findOne({ $or: [{ displayName }, { email }] });
+        if (user) {
+            let message = "";
+            if (user.displayName === displayName && user.email === email) {
+                message = "User already exist";
+            }
+            else if (user.displayName === displayName) {
+                message = "Display name already exist";
+            }
+            else {
+                message = "Email already exist";
+            }
+            (0, utils_1.sendError)(res, { message, name: "client" });
             return;
         }
         const { otp, hashedOTP } = await utils_1.OTP.generateOTP();

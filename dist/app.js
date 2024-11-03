@@ -10,7 +10,6 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const route_1 = require("./route");
-const bullmqProducer_1 = require("./lib/bullmqProducer");
 const app = (0, express_1.default)();
 const PORT = Number(process.env.PORT) || 8000;
 app.use((0, cors_1.default)());
@@ -20,10 +19,6 @@ app.use("/admin", route_1.admin);
 app.use("/auth", route_1.auth);
 app.use("/user", route_1.user);
 app.use("/post", route_1.post);
-app.get("/", (req, res) => {
-    (0, bullmqProducer_1.sendOtpQueue)({ email: "bapparajsk97@gmail.com", otp: "1234" });
-    res.send("Hello World!");
-});
 /*
 if (cluster.isPrimary) {  // this is the primary instance of the cluster
     console.log(`Primary ${process.pid} is running`);
