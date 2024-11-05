@@ -12,7 +12,7 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password || !(0, validators_1.isEmail)(email)) {
-            (0, utils_1.sendError)(res, { message: "Email and password are required" });
+            (0, utils_1.sendError)(res, { message: "Email and password are required", name: "client" });
             return;
         }
         const user = await model_1.UserModel.findOne({ email });
@@ -74,12 +74,12 @@ const resendOTP = async (req, res) => {
     try {
         const { token } = req.body;
         if (!token) {
-            (0, utils_1.sendError)(res, { message: "Email is required" });
+            (0, utils_1.sendError)(res, { message: "token is required", name: "notFound" });
             return;
         }
         const data = utils_1.jwt.verify(token);
         if (!data) {
-            (0, utils_1.sendError)(res, { message: "Invalid token" });
+            (0, utils_1.sendError)(res, { message: "Invalid token", name: "client" });
             return;
         }
         await config_1.redis.set(`reject:${token}`, "true", "EX", 300);
@@ -99,22 +99,22 @@ const verifyOTP = async (req, res) => {
     try {
         const { otp, token } = req.body;
         if (!otp || !token) {
-            (0, utils_1.sendError)(res, { message: "OTP is required" });
+            (0, utils_1.sendError)(res, { message: "OTP is required", name: "client" });
             return;
         }
         const isValidToken = await config_1.redis.get(`reject:${token}`);
         if (isValidToken !== null) {
-            (0, utils_1.sendError)(res, { message: "Invalid token" });
+            (0, utils_1.sendError)(res, { message: "Invalid token", name: "client" });
             return;
         }
         const data = utils_1.jwt.verify(token);
         if (!data) {
-            (0, utils_1.sendError)(res, { message: "Invalid token" });
+            (0, utils_1.sendError)(res, { message: "Invalid token", name: "client" });
             return;
         }
         const isMatch = await utils_1.OTP.verifyOTP(otp, data.hashedOTP);
         if (!isMatch) {
-            (0, utils_1.sendError)(res, { message: "Invalid OTP" });
+            (0, utils_1.sendError)(res, { message: "Invalid OTP", name: "client" });
             return;
         }
         const user = new model_1.UserModel({ ...data });

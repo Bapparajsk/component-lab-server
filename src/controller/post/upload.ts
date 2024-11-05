@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import {sendError, sendSuccess} from "../../utils";
-import {PostUploadList, UserToken} from "../../types/user";
-import {PostUploadUserModel} from "../../model";
+import {UserToken} from "../../types/user";
+import {PostUploadUserModel, PostModel} from "../../model";
 import {isValidRepoUrl} from "../../validators/url.validator";
 import {fetchUser, fetchUserFromDatabase} from "../../helper/user";
 import {redis} from "../../config";
@@ -17,7 +17,7 @@ export const addNewPost = async (req: Request, res: Response) => {
 
         const [error, userData] = await fetchUserFromDatabase(req.User as UserToken);
         if (error || !userData) {
-            sendError(res, {message: error});
+            sendError(res, {message: error, name: "unauthorized"});
             return;
         }
 
@@ -58,73 +58,77 @@ export const addNewPost = async (req: Request, res: Response) => {
 export const getPostsList = async (req: Request, res: Response) => {
     try {
         const env = req.query.env as string || "pending";
-        const page = Number(req.query.page as string ) || 1;
-        const limit = Number(req.query.limit as string) || 10;
+        const page = Number(req.query.page as string) || 1;
+        const limit = Math.min(Number(req.query.limit as string) || 10, 25);
 
+        // Validate environment and pagination parameters
         if (!["all", "pending", "approved", "creating-files", "uploaded", "rejected"].includes(env)) {
-            sendError(res, {message: "invalid environment", name: "client"});
-            return;
+            return sendError(res, {message: "invalid environment", name: "client"});
         }
-
-        if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1 || limit > 25) {
-            sendError(res, {message: "invalid page or limit", name: "client"});
-            return;
+        if (isNaN(page) || isNaN(limit) || page < 1) {
+            return sendError(res, {message: "invalid page or limit", name: "client"});
         }
 
         const user = req.User as UserToken;
-        if (!user) {
-            sendError(res, {message: "user not found", name: "client"});
-            return;
-        }
+        if (!user) return sendError(res, {message: "user not found", name: "unauthorized"});
 
         const [error, userData] = await fetchUser(user.id);
         if (error || !userData) {
-            sendError(res, {message: error, name: "client"});
-            return;
+            return sendError(res, {message: error, name: "unauthorized",});
         }
 
-        const cash = await redis.get(`post-list-user:${userData._id}-${env}-${page}-${limit}`);
-        if (cash) {
-            sendSuccess(res, {message: "post list", data: JSON.parse(cash)});
-            return;
+        const cacheKey = `post-list-user:${userData._id}-${env}-${page}-${limit}`;
+        const cachedData = await redis.get(cacheKey);
+        if (cachedData) return sendSuccess(res, {message: "post list", data: JSON.parse(cachedData)});
+
+        // Filter and select posts based on env
+        let postList: any[] = [];
+        switch (env) {
+            case "all":
+                postList = [
+                    ...userData.postUploadList.values(),
+                    ...userData.postCompletedList.values(),
+                    ...userData.postRejectList.values(),
+                ];
+                break;
+            case "pending":
+            case "approved":
+            case "creating-files":
+                postList = [...userData.postUploadList.values()];
+                break;
+            case "completed":
+                postList = [...userData.postCompletedList.values()];
+                break;
+            case "rejected":
+                postList = [...userData.postRejectList.values()];
+                break;
         }
 
-        const postList:PostUploadList[]  = [];
-
-        if (env === "all") {
-            postList.push(
-                ...userData.postUploadList.values(),
-                ...userData.postCompletedList.values(),
-                ...userData.postRejectList.values()
-            );
-        } else if (env === "pending" || env === "approved" || env === "creating-files") {
-            postList.push(...userData.postUploadList.values());
-        } else if (env === "completed") {
-            postList.push(...userData.postUploadList.values());
-        } else if (env === "rejected") {
-            postList.push(...userData.postUploadList.values());
-        } else {
-            sendError(res, {message: "invalid environment", name: "client"});
-            return;
+        if (!postList.length) {
+            return sendSuccess(res, {message: "No posts found", data: { total: 0, totalPages: 0, page, limit, posts: []}});
         }
 
+        // Paginate
         const total = postList.length;
         const totalPages = Math.ceil(total / limit);
         const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
-
+        const endIndex = Math.min(startIndex + limit, total);
         const posts = postList.slice(startIndex, endIndex);
-        const data = {
-            total,
-            totalPages,
-            page,
-            limit,
-            posts,
-        };
 
-        redis.set(`post-list-user:${userData._id}-${env}-${page}-${limit}`, JSON.stringify(data), "EX", 60);
+        // Resolve post details in parallel for "completed" status posts
+        const completedPosts = await Promise.all(
+            posts.map(async (post) => {
+                if (post.progress === "completed") {
+                    return (await PostModel.findById(post.id)) || post;
+                }
+                return post;
+            })
+        );
+
+        const data = { total, totalPages, page, limit, posts: completedPosts };
+        await redis.set(cacheKey, JSON.stringify(data), "EX", 60);
+
         sendSuccess(res, {message: "post list", data});
-
     } catch (e) {
         console.error(e);
         sendError(res, {message: "internal server error"});
