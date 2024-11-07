@@ -6,6 +6,8 @@ const connection = {
     host: process.env.REDIS_HOST || "127.0.0.1", // Redis host
 };
 
+console.warn("Worker is running");
+
 const workerOptions: WorkerOptions = {
     connection,
 };

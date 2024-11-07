@@ -63,23 +63,32 @@ export const getPostsList = async (req: Request, res: Response) => {
 
         // Validate environment and pagination parameters
         if (!["all", "pending", "approved", "creating-files", "uploaded", "rejected"].includes(env)) {
-            return sendError(res, {message: "invalid environment", name: "client"});
+            sendError(res, {message: "invalid environment", name: "client"});
+            return;
         }
         if (isNaN(page) || isNaN(limit) || page < 1) {
-            return sendError(res, {message: "invalid page or limit", name: "client"});
+            sendError(res, {message: "invalid page or limit", name: "client"});
+            return;
         }
 
         const user = req.User as UserToken;
-        if (!user) return sendError(res, {message: "user not found", name: "unauthorized"});
+        if (!user) {
+            sendError(res, {message: "unauthorized", name: "unauthorized"});
+            return;
+        }
 
         const [error, userData] = await fetchUser(user.id);
         if (error || !userData) {
-            return sendError(res, {message: error, name: "unauthorized",});
+            sendError(res, {message: error, name: "unauthorized",});
+            return;
         }
 
         const cacheKey = `post-list-user:${userData._id}-${env}-${page}-${limit}`;
         const cachedData = await redis.get(cacheKey);
-        if (cachedData) return sendSuccess(res, {message: "post list", data: JSON.parse(cachedData)});
+        if (cachedData) {
+            sendSuccess(res, {message: "post list", data: JSON.parse(cachedData)});
+            return;
+        }
 
         // Filter and select posts based on env
         let postList: any[] = [];
@@ -105,7 +114,8 @@ export const getPostsList = async (req: Request, res: Response) => {
         }
 
         if (!postList.length) {
-            return sendSuccess(res, {message: "No posts found", data: { total: 0, totalPages: 0, page, limit, posts: []}});
+            sendSuccess(res, {message: "No posts found", data: { total: 0, totalPages: 0, page, limit, posts: []}});
+            return;
         }
 
         // Paginate
