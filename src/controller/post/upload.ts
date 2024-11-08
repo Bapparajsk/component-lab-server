@@ -3,7 +3,7 @@ import {sendError, sendSuccess} from "../../utils";
 import {UserToken} from "../../types/user";
 import {PostUploadUserModel, PostModel} from "../../model";
 import {isValidRepoUrl} from "../../validators/url.validator";
-import {fetchUser, fetchUserFromDatabase} from "../../helper/user";
+import {fetchUserFromDatabase} from "../../helper/user";
 import {redis} from "../../config";
 
 
@@ -83,7 +83,7 @@ export const getPostsList = async (req: Request, res: Response) => {
             return;
         }
 
-        const [error, userData] = await fetchUser(user.id);
+        const [error, userData] = await fetchUserFromDatabase(user);
         if (error || !userData) {
             sendError(res, {message: error, name: "unauthorized",});
             return;
@@ -97,6 +97,17 @@ export const getPostsList = async (req: Request, res: Response) => {
         }
 
         // Filter and select posts based on env
+        
+        // console.log(userData.postUploadList , "dfjasfjk");
+        
+        // if(!userData.postUploadList || !userData.postCompletedList || !userData.postRejectList) {
+        //     console.log("No posts found");
+            
+        //     sendError(res, {message: "No posts found", name: "client"});
+        //     return;
+        // }
+
+
         let postList: any[] = [];
         switch (env) {
             case "all":
