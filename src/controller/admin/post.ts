@@ -142,10 +142,10 @@ export const postProspering = async (req: Request, res: Response) => {
         postUploadListData.progress = env;
         if(postUploadListData.timeLine) {
             if (env === "approved") {
-                postUploadListData.timeLine.approved = new Date();
+                postUploadListData.timeLine.approved = new Date().toDateString();
                 postUploadListData.timeLine["creating-files"] = "processing";
             } else {
-                postUploadListData.timeLine["creating-files"] = new Date();
+                postUploadListData.timeLine["creating-files"] = new Date().toDateString();
                 postUploadListData.timeLine.completed = "processing";
             }
         }

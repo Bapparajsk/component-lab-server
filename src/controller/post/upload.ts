@@ -46,7 +46,7 @@ export const addNewPost = async (req: Request, res: Response) => {
             verifyDate: null,
             progress: "pending",
             timeLine: {
-                upload: new Date(),
+                upload: new Date().toDateString(),
                 approved: "processing",
                 "creating-files": "-",
                 completed: "-",

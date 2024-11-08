@@ -22,10 +22,10 @@ interface PostUploadList {
     verifyDate: Date | null,
     progress: "pending" | "approved" | "creating-files" | "completed" | "rejected";
     timeLine?: {
-        "upload": Date | "processing" | "-",
-        "approved": Date | "processing" | "-",
-        "creating-files": Date | "processing" | "-",
-        "completed": Date | "processing" | "-",
+        "upload": string,
+        "approved": string,
+        "creating-files": string,
+        "completed": string,
     }
 }
 

@@ -24,10 +24,10 @@ const PostUploadListSchema = new Schema<UserSchemas.PostUploadList>({
     verifyDate: {type: Date, default: null},
     progress: {type: String, required: true},
     timeLine: {
-        upload: {type: Date, default: "-"},
-        approved: {type: Date, default: "-"},
-        "creating-files": {type: Date, default: "-"},
-        completed: {type: Date, default: "-"},
+        upload: {type: String, default: "-"},
+        approved: {type: String, default: "-"},
+        "creating-files": {type: String, default: "-"},
+        completed: {type: String, default: "-"},
     },
 });
 
