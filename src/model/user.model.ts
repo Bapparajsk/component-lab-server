@@ -8,11 +8,6 @@ const LinksSchema = new Schema<UserSchemas.Links>({
     url: {type: String, required: true},
 });
 
-const PostTypeSchema = new Schema<UserSchemas.PostType>({
-    id: {type: Schema.Types.ObjectId, required: true},
-    title: {type: String, required: true},
-});
-
 const FriendsSchema = new Schema<UserSchemas.Friends>({
     id: {type: Schema.Types.ObjectId, required: true},
     displayName: {type: String, required: true},
@@ -28,6 +23,12 @@ const PostUploadListSchema = new Schema<UserSchemas.PostUploadList>({
     uploadDate: {type: Date, default: Date.now},
     verifyDate: {type: Date, default: null},
     progress: {type: String, required: true},
+    timeLine: {
+        upload: {type: Date, default: "-"},
+        approved: {type: Date, default: "-"},
+        "creating-files": {type: Date, default: "-"},
+        completed: {type: Date, default: "-"},
+    },
 });
 
 const UserSchema = new Schema<UserSchemas.IUser>({

@@ -21,6 +21,12 @@ interface PostUploadList {
     uploadDate: Date,
     verifyDate: Date | null,
     progress: "pending" | "approved" | "creating-files" | "completed" | "rejected";
+    timeLine?: {
+        "upload": Date | "processing" | "-",
+        "approved": Date | "processing" | "-",
+        "creating-files": Date | "processing" | "-",
+        "completed": Date | "processing" | "-",
+    }
 }
 
 interface IUser extends Document {

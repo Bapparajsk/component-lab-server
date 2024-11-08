@@ -45,6 +45,12 @@ export const addNewPost = async (req: Request, res: Response) => {
             uploadDate: new Date(),
             verifyDate: null,
             progress: "pending",
+            timeLine: {
+                upload: new Date(),
+                approved: "processing",
+                "creating-files": "-",
+                completed: "-",
+            },
         });
 
         sendSuccess(res, {message: "post added successfully"});

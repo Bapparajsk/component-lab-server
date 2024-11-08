@@ -5,7 +5,7 @@ import {IUser, PostUploadList} from "../../types/user";
 import {sendMailQueue} from "../../lib/bullmqProducer";
 import {PostUploadUserTypes} from "../../types/post-upload-user";
 
-const updateUserPostLists = async (
+const updateUserPostLists = (
     userData: IUser,
     key: string,
     postData: PostUploadList,
@@ -14,7 +14,6 @@ const updateUserPostLists = async (
     userData.postUploadList.delete(key);
     postData.progress = (listName === "postCompletedList") ? "completed" : "rejected";
     userData[listName].set(key, postData);
-    await userData.save();
 };
 
 const isValidPost = async (id: string): Promise<{
@@ -80,7 +79,7 @@ export const addPost = async (req: Request, res: Response) => {
         });
 
         await newPOst.save();
-        await updateUserPostLists(userData, key, postUploadListData, "postCompletedList");
+        updateUserPostLists(userData, key, postUploadListData, "postCompletedList");
         sendSuccess(res, {message: "Post added successfully"});
         PostUploadUserModel.findByIdAndDelete(id).catch(console.error);
         return;
@@ -104,7 +103,8 @@ export const rejectPost = async (req: Request, res: Response) => {
             return;
         }
 
-        await updateUserPostLists(userData, key, postUploadListData, "postRejectList");
+        updateUserPostLists(userData, key, postUploadListData, "postRejectList");
+        postUploadListData.timeLine = undefined;
         await userData.save();
         await PostUploadUserModel.findByIdAndDelete(id);
         sendSuccess(res, {message: "Post rejectPost successfully"});
@@ -140,6 +140,16 @@ export const postProspering = async (req: Request, res: Response) => {
         }
 
         postUploadListData.progress = env;
+        if(postUploadListData.timeLine) {
+            if (env === "approved") {
+                postUploadListData.timeLine.approved = new Date();
+                postUploadListData.timeLine["creating-files"] = "processing";
+            } else {
+                postUploadListData.timeLine["creating-files"] = new Date();
+                postUploadListData.timeLine.completed = "processing";
+            }
+        }
+
         userData.postUploadList.set(key, postUploadListData);
         await userData.save();
         sendSuccess(res, {message: "Post approved successfully"});
